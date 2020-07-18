@@ -1,0 +1,45 @@
+---
+- hosts: all
+  task:
+   - name: ping the node 
+     ping: 
+
+# or like this ####################################
+###################################################
+
+- hosts: app
+  tasks:
+    - import_tasks: task1.yml
+
+- hosts: web
+  tasks:
+    - file:
+       path: /tmp/mahi
+       state: directory
+
+    - yum:
+       name: httpd
+       state: latest
+####################################################################################################
+
+- hosts: app
+  become: yes
+  remote_user: test
+  tasks1:
+      - name: install apache2
+        yum:
+          name: httpd
+          state: present  
+  tasks:
+        - name: ping the node
+          ping:
+            
+- hosts: web
+  become: yes
+  remote_user: test
+  tasks:
+
+        - name: install apache2
+          apt:
+            name: apache2
+            state: present

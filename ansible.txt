@@ -1,0 +1,189 @@
+############################################################################################################
+                                            Note only 
+ imp getfacl is use to see file or folder permistion smae setfacl is use to set permistion
+############################################################################################################
+getfacl /have/amardip/ansible.cfg
+
+setfacl -m u:amardip:rwx ansible.cfg  # this is giev red write and excut accees to amardip
+setfacl -x u:amardip:  ansible.cfg # this is remove all the accees  form the amrdip group 
+
+folow the link for the more infoormation https://www.computerhope.com/unix/usetfacl.htm
+############################################################################################################
+
+ansible is a configartion tool whic is use configar and update the system it is automation tool
+ansible must install on linux system windows is not support ansible so we need linux with pyhon 2.4 and more  
+it is working like server clint or master or sleve  arcithec 
+you can mange netwok divce also like firewall and all 
+when your going to install the ansible u should have comuniction betwin all the system 
+ansible need SSH to comuniction with ssh you can't perform the any task 
+install the ansible it have some depenadncy also u have install that
+
+when you install ansible it have invantry file you can find the invantry file in locatoin in config file 
+/etc/ansible/ansible.cfg 
+the invantry file is in my case in 
+/etc/ansible/host = u can enter ip of clint system in this hosts file 
+
+to check the all coneected node use cmd 
+
+ansible all --list -host 
+you can enter the all host in one single group  like [web_server] or [myclint] and enter ip of clint below 
+
+you can enter hostname also instenc with ip also 
+
+to check the aprticul group of host you can  use below cmd 
+
+ansible web --list-hosts
+
+if you want to check both server use belwo cmd 
+
+ansible web : app --list-hots or ansible all --list-hosts
+
+[main:children]
+app 
+web
+
+in abow group we add other group also using children
+
+you can use your won invantryfile also 
+
+ansible all --list-hosts -i /home/amardip/myinvfile
+                                |
+                                |____________________________this is the path of invantryfile
+
+if you want to use custom file with give i and file path of invfile you have to make change in /etc/ansible/ansible.cfg
+
+give your invantryfile file path in front of invantry = /home/amardip/myinvfile
+
+so you dont have to mantion a path of file every time 
+
+you have more than one user and that user want to change ther invenrty file data so it make confilt 
+
+to resolve this isssue we use ansible.cfg to set invantryfile path  we nver user old ansible.cfg file 
+
+copy the curent location of file in your location and use this 
+
+copy /etc/ansible/ansible.cfg /home/amardip/ansible.cfg
+
+we can copy that file and keep in user locatoin and you can set a new ansible.cfg path useing export cmd 
+
+export ANSIBLE_CONFIG=/home/amardip/ansible.cfg
+
+after this you can check the usering ansible --version 
+
+than change the invantryfile path 
+
+in abouw case after restartthe export entry remove to make this permnet inside userhome accout ther is file .bashrc
+make entry in this file
+.bashrc 
+expor ANSIBLE_CONFIG =/home/amardip/ansible.cfg
+
+and if user want to remove the varbeal which we set for ansible use belwo cmd 
+
+unset ANSIBLE_CONFIG 
+
+if you have set all ther option and some as u which enty it choose for this the anser is 
+
+1 use -i filepath
+2 varbeal(export)
+3 defult location
+
+
+if u run any cmd from the ansible_server it will run that cmd on worker node useing same user which you loging in ansible_server
+so it will ask you key authontication do overcome from this problme we can set host_key_checking = false in ansible.cfg
+
+@@@@@@@@@@@
+            ansible all -m command -a " ls " -k 
+                     |    | 
+                     |____|______________________________target grop u can use other group also like app , web 
+                          |___________module for m we use command module with argument for this we use -a
+                          |_____________  ls is simple cmd and -k to eun this without cmd 
+
+
+ you can use bash for connect the ec2 copy past your cmd from aws portal 
+
+ https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html 
+ installation_guide
+
+if you want to install letesta vr of ansible you can copy repo form epl side and creat repo 
+than install ansible 
+
+u can make passwrdathunticationallwo yes in sshd_config in ssh
+
+after this you can shear a key with clint also 
+
+ssh -keygen
+ssh -copy-id user@hostip 
+
+############################################################################## 
+you can find the ansible playbook in same folder with extenion of yml
+
+tu run the playbook you have to give cmd like below 
+
+ansible-playbook myfilelocatio_or_name.yml
+
+if you want to install any pakg and you need root accees use k in end of cmd 
+
+ansible-playbook myfilelocatio_or_name.yml -k
+
+if we user -vvv it will give you all the infomation about how ths ansble working 
+
+ansible all -vvv -m command -a " ls " -k 
+
+ansible -m setup all - it will colect all fact(information )  for all node 
+
+bydifult when you run any ansible cmd it run fist than do all task 
+
+it make your process liter slow so we ace writhat 
+
+after become: yes 
+      gather_facts: yes 
+
+it will make fast your process
+
+ansible -m ping all # this is to ping all clint 
+
+to do task in ansible we have to authontication for that clint it should be user name passwd or ssh_key
+
+when you alredy user the ssh key betwin both clint and server at that time we dosnt need a passwd
+
+but if you wnat to ask password for this use ( -K )  when we use -k it ask passwd but take your curent working terminal username
+#######################################################################################################################################
+# Note: use visudo and than in this fille add user user entry belwo to %root user and give same paramiter 
+testuser ALL = (ALL) NOPASSWD: ALL
+#######################################################################################################################################
+ 
+ python is must for clint and server 
+
+
+ansible --version == thsi cmd show below data 
+
+ansible 2.9.3            # version of ansible 
+
+  config file = /etc/ansible/ansible.cfg   # path of configartion file and it's look like belwo 
+
+  
+# some basic default values...
+
+#inventory      = /etc/ansible/hosts
+#library        = /usr/share/my_modules/
+#module_utils   = /usr/share/my_module_utils/
+#remote_tmp     = ~/.ansible/tmp
+#local_tmp      = ~/.ansible/tmp
+#plugin_filters_cfg = /etc/ansible/plugin_filters.yml
+###############################################################################################################
+
+
+  configured module search path = ['/home/test/.ansible/plugins/modules', '/usr/share/ansible/plugins/modules']
+  ansible python module location = /usr/lib/python3.6/site-packages/ansible
+  executable location = /usr/bin/ansible
+  python version = 3.6.8 (default, Nov 21 2019, 19:31:34) [GCC 8.3.1 20190507 (Red Hat 8.3.1-4)]
+
+
+
+
+
+
+
+
+
+
